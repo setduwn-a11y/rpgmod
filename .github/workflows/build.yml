@@ -33,6 +33,7 @@ jobs:
           rm -rf build-mod/src/main/java
           mkdir -p build-mod/src/main/java
           cp -r src/main/java/* build-mod/src/main/java/
+          if [ -d src/main/resources ]; then cp -r src/main/resources/* build-mod/src/main/resources/; fi
           sed -i -E 's/^mod_id[[:space:]]*=.*/mod_id=rpgmod/' build-mod/gradle.properties
           grep -rl "examplemod" build-mod --include=*.properties --include=*.gradle --include=*.toml --include=*.json --include=*.mcmeta | xargs -r sed -i 's/examplemod/rpgmod/g'
           echo "--- gradle.properties ---"
