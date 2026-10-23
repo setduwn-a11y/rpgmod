@@ -1,0 +1,48 @@
+name: Compilar el mod
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ main, master ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Descargar mis archivos
+        uses: actions/checkout@v4
+
+      - name: Instalar Java 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+
+      - name: Descargar el kit oficial de Forge 1.21.1
+        run: |
+          curl -sL https://maven.minecraftforge.net/net/minecraftforge/forge/promotions_slim.json -o promos.json
+          VER=$(jq -r '.promos["1.21.1-recommended"] // .promos["1.21.1-latest"]' promos.json)
+          echo "Version de Forge: $VER"
+          curl -sL -o mdk.zip "https://maven.minecraftforge.net/net/minecraftforge/forge/1.21.1-$VER/forge-1.21.1-$VER-mdk.zip"
+          mkdir build-mod
+          unzip -q mdk.zip -d build-mod
+          ls -la build-mod
+
+      - name: Poner el codigo del mod
+        run: |
+          rm -rf build-mod/src/main/java
+          mkdir -p build-mod/src/main/java
+          cp -r src/main/java/* build-mod/src/main/java/
+          sed -i 's/^mod_id=.*/mod_id=rpgmod/' build-mod/gradle.properties
+
+      - name: Compilar
+        working-directory: build-mod
+        run: |
+          chmod +x gradlew
+          ./gradlew build --no-daemon
+
+      - name: Guardar el archivo del mod
+        uses: actions/upload-artifact@v4
+        with:
+          name: rpgmod
+          path: build-mod/build/libs/*.jar
