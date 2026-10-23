@@ -1,0 +1,3 @@
+RPG Mod - Fase 1 (Forge 1.21.1)
+Sube todo el contenido de esta carpeta a tu repositorio de GitHub.
+GitHub compilara el mod automaticamente y podras descargar el archivo .jar.
