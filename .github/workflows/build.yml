@@ -13,17 +13,17 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Instalar Java 21
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v5
         with:
           distribution: temurin
           java-version: 21
 
       - name: Descargar el kit oficial de Forge 1.21.1
         run: |
-          curl -sL https://maven.minecraftforge.net/net/minecraftforge/forge/promotions_slim.json -o promos.json
+          curl -fsSL https://files.minecraftforge.net/net/minecraftforge/forge/promotions_slim.json -o promos.json
           VER=$(jq -r '.promos["1.21.1-recommended"] // .promos["1.21.1-latest"]' promos.json)
           echo "Version de Forge: $VER"
-          curl -sL -o mdk.zip "https://maven.minecraftforge.net/net/minecraftforge/forge/1.21.1-$VER/forge-1.21.1-$VER-mdk.zip"
+          curl -fsSL -o mdk.zip "https://maven.minecraftforge.net/net/minecraftforge/forge/1.21.1-$VER/forge-1.21.1-$VER-mdk.zip"
           mkdir build-mod
           unzip -q mdk.zip -d build-mod
           ls -la build-mod
