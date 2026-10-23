@@ -4,10 +4,13 @@ import com.example.rpgmod.data.PlayerRpgData;
 import com.example.rpgmod.data.RpgBonuses;
 import com.example.rpgmod.data.RpgClass;
 import com.example.rpgmod.data.RpgDataStore;
+import com.example.rpgmod.data.RpgProgress;
 import com.example.rpgmod.data.RpgRace;
+import com.example.rpgmod.data.RpgSkill;
 import com.example.rpgmod.skill.ManaManager;
 import com.example.rpgmod.skill.SkillManager;
 import com.mojang.brigadier.CommandDispatcher;
+import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
@@ -16,7 +19,9 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraftforge.event.RegisterCommandsEvent;
 import java.util.Arrays;
 
-/** /rpg info | /rpg class <id> | /rpg race <id> | /rpg cast */
+/**
+ * /rpg info | class <id> | race <id> | cast | skills | learn <id> | respec | givexp <n>
+ */
 public final class RpgCommands {
 
     public static void onRegisterCommands(RegisterCommandsEvent event) {
@@ -28,11 +33,15 @@ public final class RpgCommands {
             .then(Commands.literal("info").executes(ctx -> {
                 ServerPlayer p = ctx.getSource().getPlayerOrException();
                 PlayerRpgData d = RpgDataStore.get(p);
+                String xpText = d.level() >= RpgProgress.MAX_LEVEL
+                    ? "nivel máximo"
+                    : d.xp() + "/" + RpgProgress.xpNeeded(d.level()) + " XP";
                 ctx.getSource().sendSuccess(() -> Component.literal(
                     "Raza: " + d.raceEnum().displayName
                     + " | Clase: " + d.rpgClassEnum().displayName
-                    + " | Nivel: " + d.level()
-                    + " | Vida máx: " + (int) p.getMaxHealth()
+                    + "\nNivel: " + d.level() + " (" + xpText + ")"
+                    + " | Puntos de habilidad: " + d.skillPoints()
+                    + "\nVida máx: " + (int) p.getMaxHealth()
                     + " | Maná: " + (int) ManaManager.get(p) + "/" + ManaManager.max(p)), false);
                 return 1;
             }))
@@ -41,6 +50,38 @@ public final class RpgCommands {
                 p.displayClientMessage(SkillManager.cast(p), true);
                 return 1;
             }))
+            .then(Commands.literal("skills").executes(ctx -> {
+                ServerPlayer p = ctx.getSource().getPlayerOrException();
+                ctx.getSource().sendSuccess(() -> RpgProgress.list(p), false);
+                return 1;
+            }))
+            .then(Commands.literal("learn")
+                .then(Commands.argument("id", StringArgumentType.word())
+                    .suggests((c, b) -> {
+                        Arrays.stream(RpgSkill.values()).forEach(x -> b.suggest(x.id));
+                        return b.buildFuture();
+                    })
+                    .executes(ctx -> {
+                        ServerPlayer p = ctx.getSource().getPlayerOrException();
+                        String id = StringArgumentType.getString(ctx, "id");
+                        Component msg = RpgProgress.learn(p, id);
+                        ctx.getSource().sendSuccess(() -> msg, false);
+                        return 1;
+                    })))
+            .then(Commands.literal("respec").executes(ctx -> {
+                ServerPlayer p = ctx.getSource().getPlayerOrException();
+                Component msg = RpgProgress.respec(p);
+                ctx.getSource().sendSuccess(() -> msg, false);
+                return 1;
+            }))
+            .then(Commands.literal("givexp")
+                .requires(src -> src.hasPermission(2))
+                .then(Commands.argument("cantidad", IntegerArgumentType.integer(1, 100000))
+                    .executes(ctx -> {
+                        ServerPlayer p = ctx.getSource().getPlayerOrException();
+                        RpgProgress.addXp(p, IntegerArgumentType.getInteger(ctx, "cantidad"));
+                        return 1;
+                    })))
             .then(Commands.literal("class")
                 .then(Commands.argument("id", StringArgumentType.word())
                     .suggests((c, b) -> {

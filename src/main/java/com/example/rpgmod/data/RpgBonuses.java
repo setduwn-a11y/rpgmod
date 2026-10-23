@@ -7,7 +7,7 @@ import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 
-/** Aplica al jugador los bonos de vida y velocidad de su clase y su raza. */
+/** Aplica al jugador los bonos de vida y velocidad de su clase, raza y habilidades. */
 public final class RpgBonuses {
     private static final ResourceLocation HEALTH_ID =
         ResourceLocation.fromNamespaceAndPath(RpgMod.MOD_ID, "bonus_health");
@@ -19,12 +19,18 @@ public final class RpgBonuses {
         RpgClass c = d.rpgClassEnum();
         RpgRace r = d.raceEnum();
 
-        double extraHealth = c.bonusHealth + r.bonusHealth;
-        double extraSpeed = (c.bonusSpeedPercent + r.bonusSpeedPercent) / 100.0;
+        int health = c.bonusHealth + r.bonusHealth;
+        int speed = c.bonusSpeedPercent + r.bonusSpeedPercent;
+        for (RpgSkill s : RpgSkill.values()) {
+            if (d.hasSkill(s.id)) {
+                health += s.bonusHealth;
+                speed += s.bonusSpeedPercent;
+            }
+        }
 
-        set(p.getAttribute(Attributes.MAX_HEALTH), HEALTH_ID, extraHealth,
+        set(p.getAttribute(Attributes.MAX_HEALTH), HEALTH_ID, health,
             AttributeModifier.Operation.ADD_VALUE);
-        set(p.getAttribute(Attributes.MOVEMENT_SPEED), SPEED_ID, extraSpeed,
+        set(p.getAttribute(Attributes.MOVEMENT_SPEED), SPEED_ID, speed / 100.0,
             AttributeModifier.Operation.ADD_MULTIPLIED_BASE);
 
         if (p.getHealth() > p.getMaxHealth()) p.setHealth(p.getMaxHealth());

@@ -29,12 +29,23 @@ public record PlayerRpgData(String rpgClass, String race, int level, int xp,
         return new PlayerRpgData(rpgClass, r.id(), level, xp, skillPoints, skills);
     }
 
-    public PlayerRpgData withSkill(String skillId) {
-        List<String> copy = new ArrayList<>(skills);
-        if (!copy.contains(skillId)) copy.add(skillId);
-        return new PlayerRpgData(rpgClass, race, level, xp, skillPoints, List.copyOf(copy));
+    public PlayerRpgData withProgress(int newLevel, int newXp, int newPoints) {
+        return new PlayerRpgData(rpgClass, race, newLevel, newXp, newPoints, skills);
     }
 
+    /** Aprende una habilidad y gasta sus puntos. */
+    public PlayerRpgData withSkill(String skillId, int cost) {
+        List<String> copy = new ArrayList<>(skills);
+        if (!copy.contains(skillId)) copy.add(skillId);
+        return new PlayerRpgData(rpgClass, race, level, xp, skillPoints - cost, List.copyOf(copy));
+    }
+
+    /** Olvida todas las habilidades y devuelve los puntos gastados. */
+    public PlayerRpgData withoutSkills(int refund) {
+        return new PlayerRpgData(rpgClass, race, level, xp, skillPoints + refund, List.of());
+    }
+
+    public boolean hasSkill(String id) { return skills.contains(id); }
     public RpgClass rpgClassEnum() { return RpgClass.byId(rpgClass).orElse(RpgClass.NINGUNA); }
     public RpgRace raceEnum() { return RpgRace.byId(race).orElse(RpgRace.HUMANO); }
 }
