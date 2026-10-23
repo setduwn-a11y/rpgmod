@@ -1,9 +1,12 @@
 package com.example.rpgmod.command;
 
 import com.example.rpgmod.data.PlayerRpgData;
+import com.example.rpgmod.data.RpgBonuses;
 import com.example.rpgmod.data.RpgClass;
 import com.example.rpgmod.data.RpgDataStore;
 import com.example.rpgmod.data.RpgRace;
+import com.example.rpgmod.skill.ManaManager;
+import com.example.rpgmod.skill.SkillManager;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import net.minecraft.commands.CommandSourceStack;
@@ -13,7 +16,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraftforge.event.RegisterCommandsEvent;
 import java.util.Arrays;
 
-/** /rpg info | /rpg class <id> | /rpg race <id>  (temporal, hasta tener la GUI) */
+/** /rpg info | /rpg class <id> | /rpg race <id> | /rpg cast */
 public final class RpgCommands {
 
     public static void onRegisterCommands(RegisterCommandsEvent event) {
@@ -29,7 +32,13 @@ public final class RpgCommands {
                     "Raza: " + d.raceEnum().displayName
                     + " | Clase: " + d.rpgClassEnum().displayName
                     + " | Nivel: " + d.level()
-                    + " | Puntos de habilidad: " + d.skillPoints()), false);
+                    + " | Vida máx: " + (int) p.getMaxHealth()
+                    + " | Maná: " + (int) ManaManager.get(p) + "/" + ManaManager.max(p)), false);
+                return 1;
+            }))
+            .then(Commands.literal("cast").executes(ctx -> {
+                ServerPlayer p = ctx.getSource().getPlayerOrException();
+                p.displayClientMessage(SkillManager.cast(p), true);
                 return 1;
             }))
             .then(Commands.literal("class")
@@ -43,6 +52,7 @@ public final class RpgCommands {
                         String id = StringArgumentType.getString(ctx, "id");
                         return RpgClass.byId(id).map(c -> {
                             RpgDataStore.set(p, RpgDataStore.get(p).withClass(c));
+                            RpgBonuses.apply(p);
                             ctx.getSource().sendSuccess(
                                 () -> Component.literal("Ahora eres: " + c.displayName), false);
                             return 1;
@@ -62,6 +72,7 @@ public final class RpgCommands {
                         String id = StringArgumentType.getString(ctx, "id");
                         return RpgRace.byId(id).map(r -> {
                             RpgDataStore.set(p, RpgDataStore.get(p).withRace(r));
+                            RpgBonuses.apply(p);
                             ctx.getSource().sendSuccess(
                                 () -> Component.literal("Tu raza ahora es: " + r.displayName), false);
                             return 1;
