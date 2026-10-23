@@ -71,6 +71,7 @@ public final class SkillManager {
                 name = "Sanación"; cooldownSeconds = 15;
             }
         }
+        ManaManager.sync(p);
         double factor = d.hasSkill("concentracion") ? 0.75 : 1.0;
         READY_AT.put(p.getUUID(), now + Math.round(cooldownSeconds * 20L * factor));
         return Component.literal(name + " | Maná: " + (int) ManaManager.get(p)

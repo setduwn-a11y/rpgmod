@@ -16,6 +16,7 @@ public final class ClientSetup {
     public static void init(IEventBus modBus) {
         modBus.addListener(ClientSetup::registerKeys);
         MinecraftForge.EVENT_BUS.addListener(ClientSetup::onKey);
+        MinecraftForge.EVENT_BUS.addListener(ManaHud::onRenderGui);
     }
 
     private static void registerKeys(RegisterKeyMappingsEvent event) {

@@ -1,8 +1,13 @@
 package com.example.rpgmod.skill;
 
 import com.example.rpgmod.data.PlayerRpgData;
+import com.example.rpgmod.data.RpgClass;
 import com.example.rpgmod.data.RpgDataStore;
+import com.example.rpgmod.network.ManaSyncPacket;
+import com.example.rpgmod.network.NetworkHandler;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
+import net.minecraftforge.network.PacketDistributor;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -20,11 +25,14 @@ public final class ManaManager {
         return max;
     }
 
+    public static double regenPerTick(Player p) {
+        return RpgDataStore.get(p).hasSkill("meditacion") ? REGEN_PER_TICK * 2 : REGEN_PER_TICK;
+    }
+
     public static double get(Player p) {
-        PlayerRpgData d = RpgDataStore.get(p);
         long now = p.level().getGameTime();
         double maxMana = max(p);
-        double regen = d.hasSkill("meditacion") ? REGEN_PER_TICK * 2 : REGEN_PER_TICK;
+        double regen = regenPerTick(p);
         double[] s = STATE.get(p.getUUID());
         if (s == null) {
             s = new double[] { maxMana, now };
@@ -41,6 +49,15 @@ public final class ManaManager {
         if (mana < cost) return false;
         STATE.get(p.getUUID())[0] = mana - cost;
         return true;
+    }
+
+    /** Envía a tu juego el maná actual para que dibuje la barra. */
+    public static void sync(ServerPlayer p) {
+        boolean hasClass = RpgDataStore.get(p).rpgClassEnum() != RpgClass.NINGUNA;
+        int max = hasClass ? max(p) : 0;
+        NetworkHandler.CHANNEL.send(
+            new ManaSyncPacket((float) get(p), max, (float) regenPerTick(p)),
+            PacketDistributor.PLAYER.with(p));
     }
 
     private ManaManager() {}

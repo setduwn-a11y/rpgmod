@@ -5,6 +5,7 @@ import com.example.rpgmod.command.RpgCommands;
 import com.example.rpgmod.data.RpgBonuses;
 import com.example.rpgmod.data.RpgDataStore;
 import com.example.rpgmod.data.RpgProgress;
+import com.example.rpgmod.network.NetworkHandler;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.api.distmarker.Dist;
@@ -23,6 +24,7 @@ public class RpgMod {
     public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
 
     public RpgMod() {
+        NetworkHandler.init();
         MinecraftForge.EVENT_BUS.addListener(RpgCommands::onRegisterCommands);
         MinecraftForge.EVENT_BUS.addListener(RpgMod::onPlayerClone);
         MinecraftForge.EVENT_BUS.addListener(RpgMod::onLogin);
@@ -31,7 +33,7 @@ public class RpgMod {
         if (FMLEnvironment.dist == Dist.CLIENT) {
             ClientSetup.init(FMLJavaModLoadingContext.get().getModEventBus());
         }
-        LOGGER.info("RPG Mod (Forge) cargado: fase 4 (niveles y árbol de habilidades)");
+        LOGGER.info("RPG Mod (Forge) cargado: fase 5 (barra de maná)");
     }
 
     /** Conserva clase, raza, nivel y habilidades al morir. */

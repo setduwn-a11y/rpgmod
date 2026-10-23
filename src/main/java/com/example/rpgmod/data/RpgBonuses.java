@@ -1,6 +1,7 @@
 package com.example.rpgmod.data;
 
 import com.example.rpgmod.RpgMod;
+import com.example.rpgmod.skill.ManaManager;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
@@ -34,6 +35,7 @@ public final class RpgBonuses {
             AttributeModifier.Operation.ADD_MULTIPLIED_BASE);
 
         if (p.getHealth() > p.getMaxHealth()) p.setHealth(p.getMaxHealth());
+        ManaManager.sync(p);
     }
 
     private static void set(AttributeInstance inst, ResourceLocation id, double amount,
