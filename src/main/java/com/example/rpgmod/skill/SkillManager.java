@@ -74,8 +74,7 @@ public final class SkillManager {
         ManaManager.sync(p);
         double factor = d.hasSkill("concentracion") ? 0.75 : 1.0;
         READY_AT.put(p.getUUID(), now + Math.round(cooldownSeconds * 20L * factor));
-        return Component.literal(name + " | Maná: " + (int) ManaManager.get(p)
-            + "/" + ManaManager.max(p));
+        return Component.literal(name);
     }
 
     private static void fireRay(ServerPlayer p, float damage) {
