@@ -5,6 +5,7 @@ import com.example.rpgmod.command.RpgCommands;
 import com.example.rpgmod.data.RpgBonuses;
 import com.example.rpgmod.data.RpgDataStore;
 import com.example.rpgmod.data.RpgProgress;
+import com.example.rpgmod.entity.RpgEntities;
 import com.example.rpgmod.item.RpgItems;
 import com.example.rpgmod.network.NetworkHandler;
 import net.minecraft.server.level.ServerPlayer;
@@ -27,6 +28,7 @@ public class RpgMod {
 
     public RpgMod() {
         IEventBus modBus = FMLJavaModLoadingContext.get().getModEventBus();
+        RpgEntities.register(modBus);
         RpgItems.register(modBus);
         NetworkHandler.init();
         MinecraftForge.EVENT_BUS.addListener(RpgCommands::onRegisterCommands);
@@ -37,7 +39,7 @@ public class RpgMod {
         if (FMLEnvironment.dist == Dist.CLIENT) {
             ClientSetup.init(modBus);
         }
-        LOGGER.info("RPG Mod (Forge) cargado: fase 6 (armas y armaduras)");
+        LOGGER.info("RPG Mod (Forge) cargado: fase 7 (primer enemigo)");
     }
 
     /** Conserva clase, raza, nivel y habilidades al morir. */

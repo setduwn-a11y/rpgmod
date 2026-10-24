@@ -1,11 +1,14 @@
 package com.example.rpgmod.client;
 
+import com.example.rpgmod.entity.RpgEntities;
+import com.example.rpgmod.entity.RuneSkeletonRenderer;
 import com.example.rpgmod.item.RpgItems;
 import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.item.ItemProperties;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraftforge.client.event.EntityRenderersEvent;
 import net.minecraftforge.client.event.InputEvent;
 import net.minecraftforge.client.event.RegisterKeyMappingsEvent;
 import net.minecraftforge.common.MinecraftForge;
@@ -20,12 +23,18 @@ public final class ClientSetup {
     public static void init(IEventBus modBus) {
         modBus.addListener(ClientSetup::registerKeys);
         modBus.addListener(ClientSetup::clientSetup);
+        modBus.addListener(ClientSetup::registerRenderers);
         MinecraftForge.EVENT_BUS.addListener(ClientSetup::onKey);
         MinecraftForge.EVENT_BUS.addListener(ManaHud::onRenderGui);
     }
 
     private static void registerKeys(RegisterKeyMappingsEvent event) {
         event.register(CAST_KEY);
+    }
+
+    /** Le dice al juego cómo dibujar a los enemigos nuevos. */
+    private static void registerRenderers(EntityRenderersEvent.RegisterRenderers event) {
+        event.registerEntityRenderer(RpgEntities.RUNE_SKELETON.get(), RuneSkeletonRenderer::new);
     }
 
     /** Le enseña al arco a "tensarse": cambia de dibujo mientras mantienes pulsado el clic derecho. */

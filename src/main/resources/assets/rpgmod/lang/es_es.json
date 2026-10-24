@@ -26,5 +26,8 @@
   "item.rpgmod.clerigo_botas": "Botas del Clérigo",
   "itemGroup.rpgmod": "RPG Mod",
   "key.rpgmod.cast": "Lanzar habilidad",
-  "key.categories.rpgmod": "RPG Mod"
+  "key.categories.rpgmod": "RPG Mod",
+  "entity.rpgmod.esqueleto_runico": "Esqueleto Rúnico",
+  "item.rpgmod.esqueleto_runico_spawn_egg": "Huevo de Esqueleto Rúnico",
+  "item.rpgmod.fragmento_runico": "Fragmento Rúnico"
 }

@@ -26,5 +26,8 @@
   "item.rpgmod.clerigo_botas": "Boots of the Cleric",
   "itemGroup.rpgmod": "RPG Mod",
   "key.rpgmod.cast": "Cast skill",
-  "key.categories.rpgmod": "RPG Mod"
+  "key.categories.rpgmod": "RPG Mod",
+  "entity.rpgmod.esqueleto_runico": "Runic Skeleton",
+  "item.rpgmod.esqueleto_runico_spawn_egg": "Runic Skeleton Spawn Egg",
+  "item.rpgmod.fragmento_runico": "Runic Fragment"
 }

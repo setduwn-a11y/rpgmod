@@ -1,6 +1,7 @@
 package com.example.rpgmod.item;
 
 import com.example.rpgmod.RpgMod;
+import com.example.rpgmod.entity.RpgEntities;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
@@ -16,6 +17,7 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.item.SwordItem;
 import net.minecraft.world.item.Tiers;
 import net.minecraft.world.item.crafting.Ingredient;
+import net.minecraftforge.common.ForgeSpawnEggItem;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
@@ -53,6 +55,13 @@ public final class RpgItems {
     public static final RegistryObject<Item> MAZA_CLERIGO = reg("maza_clerigo",
         () -> new SwordItem(Tiers.IRON, new Item.Properties()
             .attributes(SwordItem.createAttributes(Tiers.IRON, 4, -3.0f))));
+
+    // ---------- Materiales y huevos de enemigos ----------
+    public static final RegistryObject<Item> FRAGMENTO_RUNICO = reg("fragmento_runico",
+        () -> new Item(new Item.Properties()));
+
+    public static final RegistryObject<Item> HUEVO_ESQUELETO_RUNICO = reg("esqueleto_runico_spawn_egg",
+        () -> new ForgeSpawnEggItem(RpgEntities.RUNE_SKELETON, 0xD2CDBE, 0x5AD7FF, new Item.Properties()));
 
     // ---------- Armaduras (un conjunto por clase) ----------
     // defensa: botas, pantalones, peto, casco
