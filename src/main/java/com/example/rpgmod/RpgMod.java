@@ -5,6 +5,7 @@ import com.example.rpgmod.command.RpgCommands;
 import com.example.rpgmod.data.RpgBonuses;
 import com.example.rpgmod.data.RpgDataStore;
 import com.example.rpgmod.data.RpgProgress;
+import com.example.rpgmod.item.RpgItems;
 import com.example.rpgmod.network.NetworkHandler;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
@@ -12,6 +13,7 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
+import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.fml.loading.FMLEnvironment;
@@ -24,6 +26,8 @@ public class RpgMod {
     public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
 
     public RpgMod() {
+        IEventBus modBus = FMLJavaModLoadingContext.get().getModEventBus();
+        RpgItems.register(modBus);
         NetworkHandler.init();
         MinecraftForge.EVENT_BUS.addListener(RpgCommands::onRegisterCommands);
         MinecraftForge.EVENT_BUS.addListener(RpgMod::onPlayerClone);
@@ -31,9 +35,9 @@ public class RpgMod {
         MinecraftForge.EVENT_BUS.addListener(RpgMod::onRespawn);
         MinecraftForge.EVENT_BUS.addListener(RpgMod::onDeath);
         if (FMLEnvironment.dist == Dist.CLIENT) {
-            ClientSetup.init(FMLJavaModLoadingContext.get().getModEventBus());
+            ClientSetup.init(modBus);
         }
-        LOGGER.info("RPG Mod (Forge) cargado: fase 5 (barra de maná)");
+        LOGGER.info("RPG Mod (Forge) cargado: fase 6 (armas y armaduras)");
     }
 
     /** Conserva clase, raza, nivel y habilidades al morir. */
