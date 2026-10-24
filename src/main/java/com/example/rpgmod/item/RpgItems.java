@@ -1,6 +1,7 @@
 package com.example.rpgmod.item;
 
 import com.example.rpgmod.RpgMod;
+import net.minecraft.core.Holder;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -28,8 +29,6 @@ import java.util.function.Supplier;
 public final class RpgItems {
     public static final DeferredRegister<Item> ITEMS =
         DeferredRegister.create(ForgeRegistries.ITEMS, RpgMod.MOD_ID);
-    public static final DeferredRegister<ArmorMaterial> ARMOR_MATERIALS =
-        DeferredRegister.create(Registries.ARMOR_MATERIAL, RpgMod.MOD_ID);
     public static final DeferredRegister<CreativeModeTab> TABS =
         DeferredRegister.create(Registries.CREATIVE_MODE_TAB, RpgMod.MOD_ID);
 
@@ -57,15 +56,15 @@ public final class RpgItems {
 
     // ---------- Armaduras (un conjunto por clase) ----------
     // defensa: botas, pantalones, peto, casco
-    public static final RegistryObject<ArmorMaterial> GUERRERO_MAT =
+    public static final Holder<ArmorMaterial> GUERRERO_MAT =
         material("guerrero", 3, 6, 8, 3, 1.0f, () -> Ingredient.of(Items.IRON_INGOT));
-    public static final RegistryObject<ArmorMaterial> MAGO_MAT =
+    public static final Holder<ArmorMaterial> MAGO_MAT =
         material("mago", 1, 3, 4, 1, 0.0f, () -> Ingredient.of(Items.AMETHYST_SHARD));
-    public static final RegistryObject<ArmorMaterial> ARQUERO_MAT =
+    public static final Holder<ArmorMaterial> ARQUERO_MAT =
         material("arquero", 2, 4, 5, 2, 0.0f, () -> Ingredient.of(Items.LEATHER));
-    public static final RegistryObject<ArmorMaterial> PICARO_MAT =
+    public static final Holder<ArmorMaterial> PICARO_MAT =
         material("picaro", 2, 4, 5, 2, 0.0f, () -> Ingredient.of(Items.BLACK_WOOL));
-    public static final RegistryObject<ArmorMaterial> CLERIGO_MAT =
+    public static final Holder<ArmorMaterial> CLERIGO_MAT =
         material("clerigo", 2, 5, 6, 2, 0.5f, () -> Ingredient.of(Items.GOLD_INGOT));
 
     static {
@@ -91,35 +90,32 @@ public final class RpgItems {
         return obj;
     }
 
-    private static RegistryObject<ArmorMaterial> material(String name, int boots, int legs, int chest,
-                                                          int helmet, float toughness,
-                                                          Supplier<Ingredient> repair) {
-        return ARMOR_MATERIALS.register(name, () -> {
-            EnumMap<ArmorItem.Type, Integer> defense = new EnumMap<>(ArmorItem.Type.class);
-            defense.put(ArmorItem.Type.BOOTS, boots);
-            defense.put(ArmorItem.Type.LEGGINGS, legs);
-            defense.put(ArmorItem.Type.CHESTPLATE, chest);
-            defense.put(ArmorItem.Type.HELMET, helmet);
-            defense.put(ArmorItem.Type.BODY, chest);
-            return new ArmorMaterial(defense, 12, SoundEvents.ARMOR_EQUIP_IRON, repair,
-                List.of(new ArmorMaterial.Layer(ResourceLocation.fromNamespaceAndPath(RpgMod.MOD_ID, name))),
-                toughness, 0.0f);
-        });
+    private static Holder<ArmorMaterial> material(String name, int boots, int legs, int chest,
+                                                  int helmet, float toughness,
+                                                  Supplier<Ingredient> repair) {
+        EnumMap<ArmorItem.Type, Integer> defense = new EnumMap<>(ArmorItem.Type.class);
+        defense.put(ArmorItem.Type.BOOTS, boots);
+        defense.put(ArmorItem.Type.LEGGINGS, legs);
+        defense.put(ArmorItem.Type.CHESTPLATE, chest);
+        defense.put(ArmorItem.Type.HELMET, helmet);
+        defense.put(ArmorItem.Type.BODY, chest);
+        return Holder.direct(new ArmorMaterial(defense, 12, SoundEvents.ARMOR_EQUIP_IRON, repair,
+            List.of(new ArmorMaterial.Layer(ResourceLocation.fromNamespaceAndPath(RpgMod.MOD_ID, name))),
+            toughness, 0.0f));
     }
 
-    private static void armorSet(String cls, RegistryObject<ArmorMaterial> mat, int durability) {
+    private static void armorSet(String cls, Holder<ArmorMaterial> mat, int durability) {
         piece(cls + "_casco", mat, ArmorItem.Type.HELMET, durability);
         piece(cls + "_peto", mat, ArmorItem.Type.CHESTPLATE, durability);
         piece(cls + "_pantalones", mat, ArmorItem.Type.LEGGINGS, durability);
         piece(cls + "_botas", mat, ArmorItem.Type.BOOTS, durability);
     }
 
-    private static void piece(String name, RegistryObject<ArmorMaterial> mat, ArmorItem.Type type, int durability) {
+    private static void piece(String name, Holder<ArmorMaterial> mat, ArmorItem.Type type, int durability) {
         reg(name, () -> new ArmorItem(mat, type, new Item.Properties().durability(type.getDurability(durability))));
     }
 
     public static void register(IEventBus bus) {
-        ARMOR_MATERIALS.register(bus);
         ITEMS.register(bus);
         TABS.register(bus);
     }
