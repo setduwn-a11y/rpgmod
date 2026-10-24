@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "pattern": [
+    "M M",
+    "MMM",
+    "MMM"
+  ],
+  "key": {
+    "M": {
+      "item": "minecraft:amethyst_shard"
+    }
+  },
+  "result": {
+    "id": "rpgmod:mago_peto",
+    "count": 1
+  }
+}

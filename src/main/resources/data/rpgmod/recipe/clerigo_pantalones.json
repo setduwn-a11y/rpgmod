@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "pattern": [
+    "MMM",
+    "M M",
+    "M M"
+  ],
+  "key": {
+    "M": {
+      "item": "minecraft:gold_ingot"
+    }
+  },
+  "result": {
+    "id": "rpgmod:clerigo_pantalones",
+    "count": 1
+  }
+}

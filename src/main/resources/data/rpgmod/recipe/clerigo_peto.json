@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "pattern": [
+    "M M",
+    "MMM",
+    "MMM"
+  ],
+  "key": {
+    "M": {
+      "item": "minecraft:gold_ingot"
+    }
+  },
+  "result": {
+    "id": "rpgmod:clerigo_peto",
+    "count": 1
+  }
+}
